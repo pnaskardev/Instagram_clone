@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:instagram_clone/resources/auth_methods.dart';
+import 'package:instagram_clone/screens/home_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/text_fied_input.dart';
 
 class LoginScreen extends StatefulWidget 
@@ -16,6 +19,38 @@ class _LoginScreenState extends State<LoginScreen>
 
   final TextEditingController _emailController=TextEditingController();
   final TextEditingController _passwordController=TextEditingController();
+  bool _isLoading =  false;
+  void loginUser() async
+  {
+    setState(() 
+    {
+      _isLoading = true;  
+    });
+    String res= await AuthMethods().loginUser
+    (
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+    setState(() 
+    {
+      _isLoading = false;  
+    });
+    if(res !='success')
+    {
+      // ignore: use_build_context_synchronously
+      showSnackBar(res, context);
+    }
+    // else
+    // {
+    //   Navigator.of(context).pushReplacement
+    //   (
+    //     MaterialPageRoute
+    //     (
+    //       builder: (context)=>const HomeScreen()
+    //     )
+    //   );
+    // }
+  }
 
   @override
   void dispose() 
@@ -107,12 +142,21 @@ class _LoginScreenState extends State<LoginScreen>
                   (
                     onTap: (() 
                     {
-                      
+                      loginUser;
                     }),
                     child: Container
                     (
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: const Text
+                      child:_isLoading ? 
+                      const Center
+                      (
+                        child: CircularProgressIndicator
+                        (
+                          color: primaryColor,
+                        ),
+                      )
+                      : 
+                      const Text
                       (
                         'Sign Up',
                         style: TextStyle
