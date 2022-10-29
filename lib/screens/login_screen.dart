@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:instagram_clone/resources/auth_methods.dart';
+import 'package:instagram_clone/responsive/mobile_screen_layout.dart';
+import 'package:instagram_clone/responsive/responsive_layout_screen.dart';
+import 'package:instagram_clone/responsive/web_screen_layout.dart';
+import 'package:instagram_clone/screens/home_screen.dart';
+import 'package:instagram_clone/screens/sign_up_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/text_fied_input.dart';
 
 class LoginScreen extends StatefulWidget 
@@ -16,6 +23,53 @@ class _LoginScreenState extends State<LoginScreen>
 
   final TextEditingController _emailController=TextEditingController();
   final TextEditingController _passwordController=TextEditingController();
+  bool _isLoading =  false;
+  void loginUser() async
+  {
+    setState(() 
+    {
+      _isLoading = true;  
+    });
+    String res= await AuthMethods().loginUser
+    (
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+    setState(() 
+    {
+      _isLoading = false;  
+    });
+    if(res !='success')
+    {
+      // ignore: use_build_context_synchronously
+      showSnackBar(res, context);
+    }
+    else
+    {
+      Navigator.of(context).pushReplacement
+      (
+        MaterialPageRoute
+        (
+          builder: (context)=>const ResponsiveLayout
+          (
+            webScreenLayout: WebScreenLayout(), 
+            mobileScreenLayout: MobileSCreenLayout()
+          )
+        )
+      );
+    }
+  }
+
+  void navigateToSignUp()
+  {
+    Navigator.of(context).pushReplacement
+    (
+      MaterialPageRoute
+      (
+        builder: (context)=>const SignUpScreen()
+      )
+    );
+  }
 
   @override
   void dispose() 
@@ -29,6 +83,7 @@ class _LoginScreenState extends State<LoginScreen>
   {
     return Scaffold
     (
+      resizeToAvoidBottomInset: false,
       body: SafeArea
       (
         child: Container
@@ -71,23 +126,43 @@ class _LoginScreenState extends State<LoginScreen>
               ),
               const SizedBox(height: 24,),
               // button login
-              Container
+              InkWell
               (
-                width: double.infinity,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric
+                onTap: loginUser,
+                child: Container
                 (
-                  vertical: 12
-                ),
-                decoration: const ShapeDecoration
-                (
-                  shape: RoundedRectangleBorder
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric
                   (
-                    borderRadius: BorderRadius.all(Radius.circular(4))
+                    vertical: 12
                   ),
-                  color: Colors.blue
+                  decoration: const ShapeDecoration
+                  (
+                    shape: RoundedRectangleBorder
+                    (
+                      borderRadius: BorderRadius.all(Radius.circular(4))
+                    ),
+                    color: Colors.blue
+                  ),
+                  child:_isLoading ? 
+                    const Center
+                    (
+                      child: CircularProgressIndicator
+                      (
+                        color: primaryColor,
+                      ),
+                    )
+                    : 
+                    const Text
+                    (
+                      'Log-in',
+                      style: TextStyle
+                      (
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
                 ),
-                child: const Text('Login'),
               ),
               const SizedBox(height: 12,),
               Flexible(flex: 2,child: Container(),),
@@ -103,18 +178,15 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                   
                   
-                  GestureDetector
+                  InkWell
                   (
-                    onTap: (() 
-                    {
-                      
-                    }),
+                    onTap: navigateToSignUp,
                     child: Container
                     (
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: const Text
+                      child:const Text
                       (
-                        'Sign Up',
+                        'Sign up',
                         style: TextStyle
                         (
                           fontWeight: FontWeight.bold

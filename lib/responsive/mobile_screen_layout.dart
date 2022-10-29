@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MobileSCreenLayout extends StatelessWidget 
@@ -7,13 +8,27 @@ class MobileSCreenLayout extends StatelessWidget
   @override
   Widget build(BuildContext context) 
   {
-    return const SafeArea
+    return  SafeArea
     (
-      child:  Scaffold
+      child: Scaffold
       (
         body: Center
         (
-          child: Text('this is mobile'),
+          child: Column
+          (
+            children: 
+            [
+                Text('This is mobile'),
+                ElevatedButton
+                (
+                  onPressed: () async
+                  {
+                    await FirebaseAuth.instance.signOut();
+                  }, 
+                  child: Text('logout')
+                )
+            ],
+          ),
         ),
       ),
     );
