@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:instagram_clone/responsive/web_screen_layout.dart';
 import 'package:instagram_clone/screens/login_screen.dart';
 import 'package:instagram_clone/screens/sign_up_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/utils/utils.dart';
 
 void main() async 
 { 
@@ -35,12 +37,40 @@ class MyApp extends StatelessWidget
       (
         scaffoldBackgroundColor: mobileBackgroundColor ,
       ),
-      // home: const ResponsiveLayout
-      // (
-      //   webScreenLayout: WebScreenLayout(), 
-      //   mobileScreenLayout: MobileSCreenLayout()
-      // )
-      home: LoginScreen(),
+      home: StreamBuilder
+      (
+          stream:FirebaseAuth.instance.authStateChanges() ,
+          builder: (context, snapshot) 
+          {
+            if(snapshot.connectionState==ConnectionState.active)
+            {
+              if(snapshot.hasData)
+              {
+                return const ResponsiveLayout
+                (
+                  webScreenLayout: WebScreenLayout(), 
+                  mobileScreenLayout: MobileSCreenLayout()
+                );
+              }
+              // theres not data
+              else if(snapshot.hasError)
+              {
+                showSnackBar(snapshot.hasError.toString(), context);
+              }
+            }
+            if(snapshot.connectionState==ConnectionState.waiting)
+            {
+              return const Center
+              (
+                child: CircularProgressIndicator
+                (
+                  color: primaryColor,
+                )
+              );
+            }
+            return const LoginScreen();
+          },
+      ),
     );
   }
 }
