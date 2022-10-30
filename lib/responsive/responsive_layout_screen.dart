@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/models/user.dart';
+import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/utils/dimensions.dart';
-class ResponsiveLayout extends StatelessWidget 
+import 'package:provider/provider.dart';
+class ResponsiveLayout extends StatefulWidget 
 {
 
   final Widget webScreenLayout;
@@ -14,6 +17,26 @@ class ResponsiveLayout extends StatelessWidget
     }
   );
 
+  @override
+  State<ResponsiveLayout> createState() => _ResponsiveLayoutState();
+}
+
+class _ResponsiveLayoutState extends State<ResponsiveLayout> 
+{
+
+  @override
+  void initState() 
+  {
+    super.initState();
+    addData();
+  }
+
+
+  addData()async
+  {
+    UserProvider _userProvider=Provider.of<UserProvider>(context,listen: false);
+    await _userProvider.refreshUser();
+  }
 
   @override
   Widget build(BuildContext context) 
@@ -25,10 +48,10 @@ class ResponsiveLayout extends StatelessWidget
         if(constraints.maxWidth>webScreenSize)
         {
           // web screen
-          return webScreenLayout;
+          return widget.webScreenLayout;
         }
         // mobile screen layout
-        return mobileScreenLayout;
+        return widget.mobileScreenLayout;
 
       },
     );
