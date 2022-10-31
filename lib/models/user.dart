@@ -26,6 +26,7 @@ class User
 
   Map<String,dynamic> toJson()=>
   {
+    "email":email,
     "username":username,
     "uid":uid,
     "photoUrl":photoUrl,
@@ -40,8 +41,8 @@ class User
 
     return User
     (
+      uid: snapshot['uid'],
       email: snapshot['email'], 
-      uid: snapshot['uid'], 
       photoUrl: snapshot['photoUrl'], 
       username: snapshot['username'], 
       bio: snapshot['bio'], 
